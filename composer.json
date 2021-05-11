@@ -1,0 +1,39 @@
+{
+    "name": "mamoot/pokemon-card-scraper",
+    "description": "Simple PHP library to scrap Pokémon cards data from official Pokémon Website",
+    "type": "library",
+    "require": {
+        "fabpot/goutte": "^4.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.86",
+        "pestphp/pest": "^1.1",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "symfony/var-dumper": "^5.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Scraper\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Scraper\\Tests\\": "tests/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nicolas Perussel",
+            "email": "nicolas.perussel@gmail.com"
+        }
+    ],
+    "scripts": {
+        "lint": "vendor/bin/php-cs-fixer fix ./src --rules=@PSR2 --diff --dry-run",
+        "lint-fix": "vendor/bin/php-cs-fixer fix ./src --rules=@PSR2",
+        "test": "vendor/bin/pest",
+        "stan": "vendor/bin/phpstan analyse src",
+        "test-coverage": "vendor/bin/phpunit --coverage-text --coverage-clover=build/coverage.xml",
+        "test-coverage-html": "vendor/bin/phpunit --coverage-text --coverage-html=build"
+    }
+}
