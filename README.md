@@ -1,16 +1,25 @@
 # Pokémon Card Scraper
 
+:fire: **WORK IN PROGRESS**
+
 Simple PHP Pokémon card scraper based on [Goutte](https://github.com/FriendsOfPHP/Goutte) web scraper and solid Symfony Components (DomCrawler, BrowserKit and HttpClient).   
 Unit tests are made with [Pest](https://github.com/pestphp/pest), an elegant wrapper around PHPUnit.
 
-***Warning!***    
-Project under "active" development.    
-Seems working for "Sun and Moon" & "Sword And Shield" series.    
-
+***Warning!***     
+Seems working for "Sun and Moon" & "Sword And Shield" series.   
 Some modelization elements need to be enhanced (ability, subtype, ...)    
 Please, be patient ;)
 
-Basic usage
+Installation
+------------
+
+Use [Composer](http://getcomposer.org/) to install the package:
+
+```
+$ composer require mamoot/pokemon-card-scraper
+```
+
+Basic usage and examples
 -------
 
 ### Create the scraper instance
@@ -51,6 +60,15 @@ dump($evolutiveCardDetailsInItalien);
 $trainerCardDetailsInSpanish = $pokemonCardScraper->setLanguage('es')->setCardNumber(160)->scrap();
 dump($trainerCardDetailsInSpanish);
 ```
+
+All given examples can be tested with ease:   
+```terminal
+$ git clone git@github.com:mamoot64/pokemon-card-scraper.git
+$ cd pokemon-card-scraper
+$ composer install
+$ php example/card-scraper.php
+```
+
 ### Dump example
 
 ````php
@@ -106,14 +124,14 @@ French (fr) is the default language.
 If you want to run the tests you should run the following commands:
 
 ```terminal
-git clone git@github.com:mamoot64/pokemon-card-scraper.git
-cd pokemon-card-scraper
-composer install
-composer test
+$ git clone git@github.com:mamoot64/pokemon-card-scraper.git
+$ cd pokemon-card-scraper
+$ composer install
+$ composer test
 ```
 
 If you want to generate coverage with HTML report, run:   
 
 ```terminal
-composer test-coverage-html
+$ composer test-coverage-html
 ```
