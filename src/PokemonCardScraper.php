@@ -2,6 +2,7 @@
 
 namespace Scraper;
 
+use Assert\Assertion;
 use Scraper\Extractor\Collector\CommonDataCollector;
 use Scraper\Extractor\Collector\PokemonCollector;
 use Scraper\Extractor\Collector\TrainerCollector;
@@ -9,15 +10,17 @@ use Goutte\Client;
 use Scraper\Domain\CardInterface;
 use Scraper\Domain\PokemonCard;
 use Scraper\Domain\TrainerCard;
+use Symfony\Component\DomCrawler\Crawler;
 
 class PokemonCardScraper
 {
     private const EUROPEAN_POKEMON_WEBSITE_URL = 'https://www.pokemon.com/%s/%s/%s/%d/';
+    private const POKEMON_MASTER_TYPE = 'Pokémon';
 
     private Client $scraperClient;
-    private string $collectionCode;
-    private int $cardNumber;
-    private string $serieCollection;
+    private ?string $collectionCode = null;
+    private ?int $cardNumber = null;
+    private ?string $serieCollection = null;
     private string $language;
 
     public function __construct(Client $goutteClient)
@@ -33,13 +36,11 @@ class PokemonCardScraper
      */
     public function scrap(): CardInterface
     {
-        $crawler = $this->scraperClient->request(
-            'GET',
-            sprintf(self::EUROPEAN_POKEMON_WEBSITE_URL, $this->language, $this->serieCollection, $this->collectionCode, $this->cardNumber)
-        );
+        $this->checkUrlIsValid();
+        $crawler = $this->getConfiguredCrawler();
 
         $commonCardData = (new CommonDataCollector($crawler))();
-        if ($commonCardData->getMasterType() === "Pokémon") {
+        if ($commonCardData->getMasterType() === self::POKEMON_MASTER_TYPE) {
             $card = new PokemonCard(
                 $commonCardData,
                 (new PokemonCollector($crawler))()
@@ -52,6 +53,40 @@ class PokemonCardScraper
         }
 
         return $card;
+    }
+
+    /**
+     * Get the configured crawler with computed url.
+     *
+     * @return \Symfony\Component\DomCrawler\Crawler
+     */
+    private function getConfiguredCrawler(): Crawler
+    {
+      return $this->scraperClient->request('GET', $this->getUrlToCrawl());
+    }
+
+    /**
+     * Valid the requested url params.
+     *
+     * @return bool
+     * @throws \Assert\AssertionFailedException
+     */
+    private function checkUrlIsValid(): bool
+    {
+      return
+        Assertion::notEmpty($this->serieCollection, 'The serie collection can\'t be empty.')
+        && Assertion::notEmpty($this->collectionCode, 'The collection code can\'t be empty.')
+        && Assertion::notEmpty($this->cardNumber, 'The card number can\'t be empty.');
+    }
+
+    /**
+     * Get the computed URL to scrap.
+     *
+     * @return string
+     */
+    private function getUrlToCrawl(): string
+    {
+      return sprintf(self::EUROPEAN_POKEMON_WEBSITE_URL, $this->language, $this->serieCollection, $this->collectionCode, $this->cardNumber);
     }
 
     /**
